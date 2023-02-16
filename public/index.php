@@ -32,10 +32,66 @@ try {
 //    }
 
     $result = $amoV4Client->GETRequestApi('leads/' . 16470559);
+    unset($result['loss_reason_id']);
     unset($result['id']);
+    unset($result['created_at']);
+    unset($result['updated_at']);
+    unset($result['status_id']);
+    unset($result['_links']);
+    unset($result['_embedded']);
+//    foreach ($result['custom_fields_values'] as $key => $value) {
+////        var_dump($key);
+//        unset($result['custom_fields_values'][$key]['is_computed']);
+//    }
+    foreach ($result['custom_fields_values'] as &$value) {
+        unset($value['is_computed']);
+//        var_dump($value);die;
+    }
+//    $result['custom_fields_values'] = [];
+    $result['name'] = 'rrrrrr';
+    var_dump($result['custom_fields_values']);die;
+//    var_dump([
+//        [
+//            'name' =>  'kkkkkk',
+//            'price' =>  1256,
+//            'responsible_user_id' =>  7781833,
+//            'group_id' =>  0,
+////                'status_id' =>  45128923,
+//            'pipeline_id' =>  5006230,
+//            'created_by' =>  7781833,
+//            'updated_by' =>  7781833,
+////                'created_at' =>  1674047357,
+////                'updated_at' =>  1676533202,
+//            'closed_at' => null,
+//            'closest_task_at' =>  1988885140,
+//            'is_deleted' =>  false,
+//            'score' => null,
+//            'account_id' =>  29914858,
+//            'labor_cost' =>  0,
+//            'is_price_computed' =>  false,
+//        ]
+//    ]);die;
 
-    $results = $amoV4Client->POSTRequestApi('leads', $result);
-    var_dump($results['validation-errors'][0]);
+    $results = $amoV4Client->POSTRequestApi('leads', [$result]);
+
+    var_dump($results);
+    var_dump($results['validation-errors'][0]);die;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //    foreach ($results as $result => $value) {
