@@ -1,0 +1,2 @@
+Ошибка: Bad request
+Код ошибки: 400https://testtaskmyrubikonru.amocrm.ru/api/v4/leads
