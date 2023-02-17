@@ -1,2 +1,2 @@
-Ошибка: Bad request
-Код ошибки: 400https://testtaskmyrubikonru.amocrm.ru/api/v4/leads
+Ошибка: Not found
+Код ошибки: 404https://testtaskmyrubikonru.amocrm.ru/api/v4/leads//notes

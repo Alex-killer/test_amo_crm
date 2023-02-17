@@ -11,17 +11,77 @@ define('REDIRECT_URL', 'https://testtaskmyrubikonru.amocrm.ru/');
 try {
     $amoV4Client = new AmoCrmV4Client(SUB_DOMAIN, CLIENT_ID, CLIENT_SECRET, CODE, REDIRECT_URL);
 
-//    $results = $amoV4Client->GETRequestApi('leads',[
-//        "filter[statuses][0][pipeline_id]" => 5006230,
-//        "filter[statuses][0][status_id]" => 45128920,
-//        "limit" => 130,
-////        "filter[price][from]" => 1500,
-////        "filter[price][to]" => 2500,
-////        "filter[custom_fields_values][price][from]" => 0,
-////        "filter[price][from]" => 5000,
-//    ])['_embedded']['leads'];
-//
-//
+// Вывод сделки с условиями
+
+    $results = $amoV4Client->GETRequestApi('leads',[
+        "filter[statuses][0][pipeline_id]" => 5006230,
+        "filter[statuses][0][status_id]" => 45128920,
+        "limit" => 130,
+    ])['_embedded']['leads'];
+
+// Вывод примечания для сделки по id
+
+    $notes = $amoV4Client->GETRequestApi('leads/' . 16470559 . '/notes')['_embedded'];
+//    var_dump($notes);
+
+
+// Вывод задач для сделки по id
+
+    $tasks = $amoV4Client->GETRequestApi('tasks', [
+            "filter[entity_type]" => "leads",
+            "filter[entity_id]" => 16470559
+        ])['_embedded'];
+
+//    var_dump($tasks);
+
+    foreach ($results as $result) {
+        if ($result['price'] == 4998) {
+
+            $notes = $amoV4Client->GETRequestApi('leads/' . $result['id'] . '/notes')['_embedded'];
+
+            $tasks = $amoV4Client->GETRequestApi('tasks', [
+                "filter[entity_type]" => "leads",
+                "filter[entity_id]" => $result['id']
+            ])['_embedded'];
+
+
+            unset($result['id']);
+            unset($result['created_at']);
+            unset($result['loss_reason_id']);
+            unset($result['_links']);
+            unset($result['_embedded']);
+            $result['status_id'] = 45128923;
+            $result['name'] = $result['name'] . '_COPY';
+
+            foreach ($result['custom_fields_values'] as &$value) {
+                unset($value['is_computed']);
+            }
+//            var_dump($result);
+            $result = $amoV4Client->POSTRequestApi('leads', [$result]);
+//            var_dump($result['_embedded']);die;
+            foreach ($result['_embedded']['leads'] as $item) {
+                if(isset($notes)) {
+                    foreach ($notes as $note) {
+                        $result_notes = $amoV4Client->POSTRequestApi('leads/' . $item['id'] . '/notes', $note);
+                        var_dump($result_notes);
+                    }
+                }
+            }
+//            var_dump($result2['_embedded']['leads']);
+
+
+        }
+    }
+
+
+
+
+
+
+
+
+// Перенос сделок с условием и другим статусом
+
 //    foreach ($results as $value) {
 //        if ($value['price'] > 5000) {
 //            $result = $amoV4Client->POSTRequestApi('leads/' . $value['id'], [
@@ -31,94 +91,74 @@ try {
 //        }
 //    }
 
-    $result = $amoV4Client->GETRequestApi('leads/' . 16470559);
-    unset($result['loss_reason_id']);
-    unset($result['id']);
-    unset($result['created_at']);
-    unset($result['updated_at']);
-    unset($result['status_id']);
-    unset($result['_links']);
-    unset($result['_embedded']);
-//    foreach ($result['custom_fields_values'] as $key => $value) {
-////        var_dump($key);
-//        unset($result['custom_fields_values'][$key]['is_computed']);
-//    }
-    foreach ($result['custom_fields_values'] as &$value) {
-        unset($value['is_computed']);
-//        var_dump($value);die;
-    }
-//    $result['custom_fields_values'] = [];
-    $result['name'] = 'rrrrrr';
-    var_dump($result['custom_fields_values']);die;
-//    var_dump([
-//        [
-//            'name' =>  'kkkkkk',
-//            'price' =>  1256,
-//            'responsible_user_id' =>  7781833,
-//            'group_id' =>  0,
-////                'status_id' =>  45128923,
-//            'pipeline_id' =>  5006230,
-//            'created_by' =>  7781833,
-//            'updated_by' =>  7781833,
-////                'created_at' =>  1674047357,
-////                'updated_at' =>  1676533202,
-//            'closed_at' => null,
-//            'closest_task_at' =>  1988885140,
-//            'is_deleted' =>  false,
-//            'score' => null,
-//            'account_id' =>  29914858,
-//            'labor_cost' =>  0,
-//            'is_price_computed' =>  false,
-//        ]
-//    ]);die;
 
-    $results = $amoV4Client->POSTRequestApi('leads', [$result]);
+// Копирование несколько сделок с другим статусом
 
-    var_dump($results);
-    var_dump($results['validation-errors'][0]);die;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    foreach ($results as $result => $value) {
-//        if (is_array($results)) {
-//            var_dump($result . $value);
+//    foreach ($results as $result) {
+//        if ($result['price'] == 4998) {
+//
+//            unset($result['id']);
+//            unset($result['created_at']);
+//            unset($result['loss_reason_id']);
+//            unset($result['_links']);
+//            unset($result['_embedded']);
+//            $result['status_id'] = 45128923;
+//
+//            foreach ($result['custom_fields_values'] as &$value) {
+//                unset($value['is_computed']);
+//            }
+//            $results = $amoV4Client->POSTRequestApi('leads', [$result]);
+//            var_dump($result);
 //        }
 //    }
+
+// Копирование сделки по id с другим статусом
+
+//    $lead_id = 16747101;
+//
+//    $result = $amoV4Client->GETRequestApi('leads/' . $lead_id);
+//
+////    var_dump($result);
+//
+//    unset($result['id']);
+//    unset($result['created_at']);
+//    unset($result['loss_reason_id']);
+//    unset($result['_links']);
+//    unset($result['_embedded']);
+//    $result['status_id'] = 45128923;
+//
+//    foreach ($result['custom_fields_values'] as &$value) {
+//        unset($value['is_computed']);
+//    }
+//    $results = $amoV4Client->POSTRequestApi('leads', [$result]);
+//
+//    var_dump($result);
+
+// Создание сделки
 
 //    $result = $amoV4Client->POSTRequestApi('leads/', [
 //                "name" => 'Тест 1',
 //                "status_id" => 45128923
 //            ]);
 
-//    $results = $amoV4Client->GETRequestApi('leads/' . 16470559 . '/notes')['_embedded'];
-//    var_dump($results);
 
-//            $result = $amoV4Client->POSTRequestApi('leads/' . 16470559 . '/notes', [
-////                [
+
+// Создание примечания для сделки по id
+
+//            $result = $amoV4Client->POSTRequestApi('leads/' . 14805019 . '/notes', [
+//                [
 //                    "note_type" => "common",
 //                    "params" => [
-//                        "text" => 12,
+//                        "text" => 'NOTE test',
 //                    ]
-////                ]
+//                ]
 //            ]);
-
+//
 //            var_dump($result);
 
+
+
+// Создание задачи для сделки по id
 
 //    $result = $amoV4Client->POSTRequestApi('tasks', [
 //        [
@@ -130,21 +170,6 @@ try {
 //            "request_id" => "example",
 //        ]
 //    ]);
-
-//    $results = $amoV4Client->GETRequestApi('tasks', [
-//            "filter[entity_type]" => "leads",
-//            "filter[entity_id]" => 16470559
-//        ])['_embedded'];
-//
-//    var_dump($results);
-
-
-
-//    foreach ($results as $value) {
-//        if ($value['price'] < 4999) {
-//            var_dump($value);
-//        }
-//    }
 }
 
 catch (Exception $ex) {
