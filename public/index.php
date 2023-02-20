@@ -34,6 +34,21 @@ try {
         "limit" => 130,
     ])['_embedded']['leads'];
 
+// 1. Задание. Перенос сделок с условием и другим статусом
+
+//    foreach ($results as $value) {
+//        if ($value['price'] > 5000) {
+//            $result = $amoV4Client->POSTRequestApi('leads/' . $value['id'], [
+//                "name" => 'COPY_' . $value['name'],
+//                "status_id" => 45128923
+//            ], 'PATCH');
+//        }
+//    }
+
+
+
+// 2. Задание.
+
     foreach ($results as $result) {
         if ($result['price'] == 4997) {
 
@@ -86,72 +101,8 @@ try {
 
                 }
             }
-//            var_dump($result['_embedded']['leads']);
-
-
         }
     }
-
-
-
-
-
-
-
-
-// Перенос сделок с условием и другим статусом
-
-//    foreach ($results as $value) {
-//        if ($value['price'] > 5000) {
-//            $result = $amoV4Client->POSTRequestApi('leads/' . $value['id'], [
-//                "name" => 'Тест 1',
-//                "status_id" => 45128923
-//            ], 'PATCH');
-//        }
-//    }
-
-
-// Копирование несколько сделок с другим статусом
-
-//    foreach ($results as $result) {
-//        if ($result['price'] == 4998) {
-//
-//            unset($result['id']);
-//            unset($result['created_at']);
-//            unset($result['loss_reason_id']);
-//            unset($result['_links']);
-//            unset($result['_embedded']);
-//            $result['status_id'] = 45128923;
-//
-//            foreach ($result['custom_fields_values'] as &$value) {
-//                unset($value['is_computed']);
-//            }
-//            $results = $amoV4Client->POSTRequestApi('leads', [$result]);
-//            var_dump($result);
-//        }
-//    }
-
-// Копирование сделки по id с другим статусом
-
-//    $lead_id = 16747101;
-//
-//    $result = $amoV4Client->GETRequestApi('leads/' . $lead_id);
-//
-////    var_dump($result);
-//
-//    unset($result['id']);
-//    unset($result['created_at']);
-//    unset($result['loss_reason_id']);
-//    unset($result['_links']);
-//    unset($result['_embedded']);
-//    $result['status_id'] = 45128923;
-//
-//    foreach ($result['custom_fields_values'] as &$value) {
-//        unset($value['is_computed']);
-//    }
-//    $results = $amoV4Client->POSTRequestApi('leads', [$result]);
-//
-//    var_dump($result);
 
 // Создание сделки
 
